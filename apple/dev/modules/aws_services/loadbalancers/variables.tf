@@ -16,7 +16,7 @@ variable "alb_sg_id" {
 variable "app_port" {
   description = "Port on which the app listens"
   type        = number
-  default     = 8000
+  default     = 80
 }
 
 variable "project_name" {

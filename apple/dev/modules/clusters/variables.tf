@@ -17,11 +17,19 @@ variable "app_image" {
   description = "Docker image URI for the app (from ECR)"
   type        = string
 }
+variable "nginx_image" {
+  description = "Docker image URI for Nginx (from ECR)"
+  type        = string
+}
 
+variable "redis_image" {
+  description = "Docker image URI for Redis (from ECR)"
+  type        = string
+}
 variable "app_port" {
   description = "Port on which the app listens"
   type        = number
-  default     = 8000
+  default     = 80
 }
 
 variable "target_group_arn" {

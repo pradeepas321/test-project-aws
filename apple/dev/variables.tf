@@ -48,5 +48,16 @@ variable "availability_zones" {
 variable "app_image" {
   description = "Docker image URI for the app (from ECR)"
   type        = string
-  default     = "963462797840.dkr.ecr.ap-south-1.amazonaws.com/student-portal:1.0"
+  default     = "963462797840.dkr.ecr.ap-south-1.amazonaws.com/student-portal:flask-latest"
+}
+variable "nginx_image" {
+  description = "Docker image URI for Nginx"
+  type        = string
+  default     = "963462797840.dkr.ecr.ap-south-1.amazonaws.com/student-portal:nginx-latest"
+}
+
+variable "redis_image" {
+  description = "Docker image URI for Redis"
+  type        = string
+  default     = "963462797840.dkr.ecr.ap-south-1.amazonaws.com/student-portal:redis-latest"
 }

@@ -45,6 +45,8 @@ module "clusters" {
   ecs_sg_id          = module.network.ecs_sg_id
   db_secret_arn      = module.database.db_secret_arn
   app_image          = var.app_image
+  nginx_image         = var.nginx_image
+  redis_image         = var.redis_image
   app_port           = 8080
   target_group_arn   = module.loadbalancers.target_group_arn
 }

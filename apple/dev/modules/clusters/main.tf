@@ -98,35 +98,75 @@ resource "aws_ecs_task_definition" "this" {
   cpu                      = 256 # 0.25 vCPU (minimum)
   memory                   = 512 # 0.5 GB (minimum)
   execution_role_arn       = aws_iam_role.ecs_execution.arn
-
-  container_definitions = jsonencode([
-    {
-      name      = "app"
-      image     = var.app_image
-      essential = true
-      environment = [
-        {
-          name  = "DB_LINK"
-          value = "postgresql://postgres:${jsondecode(data.aws_secretsmanager_secret_version.db_secret.secret_string)["password"]}@${jsondecode(data.aws_secretsmanager_secret_version.db_secret.secret_string)["host"]}:5432/${jsondecode(data.aws_secretsmanager_secret_version.db_secret.secret_string)["dbname"]}"
-        }
-      ]
-      portMappings = [
-        {
-          containerPort = var.app_port
-          hostPort      = var.app_port
-          protocol      = "tcp"
-        }
-      ]
-      logConfiguration = {
-        logDriver = "awslogs"
-        options = {
-          "awslogs-group"         = aws_cloudwatch_log_group.this.name
-          "awslogs-region"        = data.aws_region.current.name
-          "awslogs-stream-prefix" = "ecs"
-        }
+container_definitions = jsonencode([
+  {
+    name      = "flask-app"
+    image     = var.app_image
+    essential = true
+    environment = [
+      {
+        name  = "DB_LINK"
+        value = "postgresql://postgres:${jsondecode(data.aws_secretsmanager_secret_version.db_secret.secret_string)["password"]}@${jsondecode(data.aws_secretsmanager_secret_version.db_secret.secret_string)["host"]}:5432/${jsondecode(data.aws_secretsmanager_secret_version.db_secret.secret_string)["dbname"]}"
+      }
+    ]
+    portMappings = [
+      {
+        containerPort = var.app_port
+        hostPort      = var.app_port
+        protocol      = "tcp"
+      }
+    ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = aws_cloudwatch_log_group.this.name
+        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-stream-prefix" = "ecs"
       }
     }
-  ])
+  },
+  {
+    name      = "nginx"
+    image     = var.nginx_image
+    essential = true
+    portMappings = [
+      {
+        containerPort = 80
+        hostPort      = 80
+        protocol      = "tcp"
+      }
+    ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = aws_cloudwatch_log_group.this.name
+        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-stream-prefix" = "ecs"
+      }
+    }
+  },
+  {
+    name      = "redis"
+    image     = var.redis_image
+    essential = true
+    portMappings = [
+      {
+        containerPort = 6379
+        hostPort      = 6379
+        protocol      = "tcp"
+      }
+    ]
+    logConfiguration = {
+      logDriver = "awslogs"
+      options = {
+        "awslogs-group"         = aws_cloudwatch_log_group.this.name
+        "awslogs-region"        = data.aws_region.current.name
+        "awslogs-stream-prefix" = "ecs"
+      }
+    }
+  }
+])
+
 }
 
 data "aws_region" "current" {}
