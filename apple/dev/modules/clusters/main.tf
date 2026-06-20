@@ -191,7 +191,7 @@ resource "aws_ecs_service" "this" {
 
   load_balancer {
     target_group_arn = var.target_group_arn
-    container_name   = "app"
+    container_name   = "nginx"
     container_port   = var.app_port
   }
 
